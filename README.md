@@ -1,9 +1,10 @@
-# auto_install
-一个自动部署环境的简单脚本
-用来给Centos7.5/6.5，
-部署Nginx,Redis,JDK包括其依赖
+# auto_install  
+一个离线自动部署环境的简单脚本  
+部署Nginx,Redis,JDK包括其依赖  
 
-> 由于github无法上传100MB以上的文件，所以软件包资源将会使用外部链接。
+> For Centos7.5/6.5  
+
+**由于github无法上传100MB以上的文件，所以软件包资源将会使用外部链接。**
 ## Centos6.5
 https://file.ahaly.cc:85/share/AdO_nM_9
 
