@@ -462,7 +462,7 @@ else
 			test jdk
 		esac
 	;;
-	*)	echo -e "\033[31m 错误的参数，示例\n(./install redis)安装redis；\n(./install redis nginx)安装redis和nginx;\n(./install)不提供参数则全部安装.;\n(./install -y)\033[0m"
+	*)	echo -e "\033[31m 错误的参数，示例\n(./install redis)安装redis；\n(./install redis nginx)安装redis和nginx;\n(./install)不提供参数则全部安装.;\n(./install -y)静默安装\033[0m"
 		exit 1
 	esac
 	done
