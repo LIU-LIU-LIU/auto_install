@@ -409,6 +409,8 @@ jdk)
 esac
 }
 
+start_time=$(date +%s)
+#开始计时
 dir=$(cd "$(dirname "$0")"; pwd)
 echo -e "\033[36m +------------------- \033[0m"
 i=0
@@ -483,3 +485,6 @@ else
 	done
 fi
 echo -e "\033[36m +------------------- \033[0m"
+end_time=$(date +%s)
+cost_time=$[ $end_time-$start_time ]
+echo -e "\033[36m 本次安装总共耗时:$(($cost_time/60))分 $(($cost_time%60))秒 \033[0m"
