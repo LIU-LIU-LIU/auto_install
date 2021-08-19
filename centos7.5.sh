@@ -255,7 +255,7 @@ install-nginx(){
 		install-tar 17 ./configure
 		${package[18]}
 		mkdir ${prefix}
-		install-tar 18 "./configure --prefix=${prefix} --with-http_ssl_module --with-http_gzip_static_module --with-pcre"
+		install-tar 18 "./configure --prefix=${prefix} --with-openssl=./package/openssl-1.1.1h --with-http_gzip_static_module --with-pcre"
 	fi
 }
 
