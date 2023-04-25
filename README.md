@@ -6,10 +6,10 @@
 
 **由于github无法上传100MB以上的文件，所以软件包资源将会使用外部链接。**
 ## Centos6.5
-https://file.ahaly.cc:85/share/AdO_nM_9
+https://file.ahaly.cc:85/share/zGLFDYfx
 
 ## Centos7.5
-https://file.ahaly.cc:85/share/2fo7H65R
+https://file.ahaly.cc:85/share/DcnBJVoO
 
 编辑脚本文件设置:
 ```
