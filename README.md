@@ -11,11 +11,14 @@ https://file.ahaly.cc:85/share/zGLFDYfx
 ## Centos7.5
 https://file.ahaly.cc:85/share/DcnBJVoO
 
+## OpenEuler22
+https://file.ahaly.cc:85/share/KlfkkorX
+
 编辑脚本文件设置:
 ```
+#编译使用的线程数，一般为CPU数量的俩倍-1
 make=4
-#编译使用的线程数，一般为CPU数量的俩倍
 nginx(){
-prefix="/opt/nginx"
 #软件安装的位置:
+prefix="/opt/nginx"
 }
