@@ -4,7 +4,6 @@
 #https://github.com/LIU-LIU-LIU/auto_install
 
 #主要版本:
-#gcc-4.8.5	7.5
 #gcc-4.4.7	6.5*
 
 #nginx-1.18
@@ -13,6 +12,7 @@
 #-----------------------
 make=4
 package=(ppl cloog-ppl mpfr cpp kernel-headers glibc-headers glibc-devel libgcc libgomp gcc redis libstdc++ libstdc++-devel gcc-c++ pcre perl openssl zlib nginx jdk)
+command=(md5sum tar rpm make)
 
 jdk(){
 name="jdk1.8.0_271.tar.gz"
@@ -97,6 +97,15 @@ name="ppl-0.10.2-11.el6.x86_64.rpm"
 md5="248fd5af655e66af417992c726ffb45c"
 }
 
+fhz(){
+if [ $1 == 0 ];then
+	echo -e "\033[36m ${2}完成 \033[0m"
+else
+	echo -e "\033[31m ${2}失败，原因见上，程序退出。 \033[0m"
+	exit 1
+fi
+}
+
 check(){
 echo -e "\033[36m +------------------- \033[0m"
 echo -e "\033[36m 1/3基础检测 \033[0m"
@@ -118,29 +127,36 @@ then
 fi
 
 echo -e "\033[36m 2/3命令检测:\033[0m"
-md5sum=`md5sum --version|awk 'NR<2{print $0}'`
-if [ -z "${md5sum}" ]
-then
-	md5sum="Not fonud"
-fi
-echo -e "\033[36m md5sum命令:${md5sum}\033[0m"
-
-tar=`tar --version|awk 'NR<2{print $0}'`
-if [ -z "${tar}" ]
-then
-        echo -e "\033[31m tar命令不存在，将无法完成解压安装操作 \033[0m"
-        tar="Not fonud "
-	exit 1
-fi
-echo -e "\033[36m tar命令:${tar}\033[0m"
-rpm_=`rpm --version|awk 'NR<2{print $0}'`
-if [ -z "${rpm_}" ]
-then
-        echo -e "\033[31m rpm命令不存在，将无法完成安装操作 \033[0m"
-        rpm_="Not fonud "
-        exit 1
-fi
-echo -e "\033[36m rpm命令:${rpm_}\033[0m"
+for v in ${command[*]}
+do
+	which ${v}
+	if [ $? -eq 0 ]
+	then
+		echo -e "\033[36m ${v}命令存在，继续。 \033[0m"
+	else
+		echo -e "\033[31m ${v}命令不存在，是否继续:(y/n) \033[0m"
+				if [ ${silent} == "yes" ]
+				then
+					echo -e "\033[31m 是 \033[0m"
+					${v}="Not found"
+				else
+					while true
+					do
+						read select
+						case $select in
+						y|yes|Y)        echo -e "\033[36m 好 \033[0m"
+							select='ok'
+							${v}="Not found"
+							break
+						;;
+						n|no|N)         echo -e "\033[31m 退出程序 \033[0m"
+							exit 1
+						;;
+						*)              echo -e "\033[31m 请输入正确的选择(y/n) \033[0m"
+						esac
+					done
+	fi
+done
 
 echo -e "\033[36m 3/3文件检测: \033[0m"
 
@@ -254,7 +270,7 @@ install-nginx(){
 		install-tar 17 ./configure
 		${package[18]}
 		mkdir ${prefix}
-		install-tar 18 "./configure --prefix=${prefix} --with-openssl=../openssl-1.1.1h --with-http_gzip_static_module --with-pcre  --with-stream"
+		install-tar 18 "./configure --prefix=${prefix} --with-openssl=../openssl-1.1.1h --with-http_ssl_module --with-http_gzip_static_module --with-pcre  --with-stream"
 	fi
 }
 
