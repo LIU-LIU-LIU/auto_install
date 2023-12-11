@@ -5,14 +5,14 @@
 
 #主要版本:
 #gcc-4.8.5	7.5*
-#gcc-4.4.7	6.5
 
-#nginx-1.18
+#nginx-1.21.3
 #redis-5.0.5
 #jdk-1.0.8_271
 #-----------------------
 make=4
 package=(mpfr libmpc cpp kernel-headers glibc-common glibc glibc-headers glibc-devel libgcc gcc redis libstdc++ libstdc++-devel gcc-c++ pcre perl openssl zlib nginx jdk)
+command=(md5sum tar rpm make)
 
 jdk(){
 name="jdk1.8.0_271.tar.gz"
@@ -20,9 +20,15 @@ prefix="/usr/local/java"
 md5="bd8dc95a810b095996acf5f5b0dd2a69"
 }
 nginx(){
-name="nginx-1.18.0.tar.gz"
+#name="nginx-1.18.0.tar.gz"
+#prefix="/opt/nginx"
+#md5="b2d33d24d89b8b1f87ff5d251aa27eb8"
+#name="nginx-1.21.3.tar.gz"
+#prefix="/opt/nginx"
+#md5="21cf8dbb90efc89012fe8b49e3e025d3"
+name="nginx-1.23.3.tar.gz"
 prefix="/opt/nginx"
-md5="b2d33d24d89b8b1f87ff5d251aa27eb8"
+md5="dcf1a476727a82b5bee702c2ca2c0833"
 }
 redis(){
 name="redis-5.0.5.tar.gz"
@@ -97,6 +103,15 @@ name="mpfr-3.1.1-4.el7.x86_64.rpm"
 md5="fc9e39143a34eb3b7c2c0cedb7f62521"
 }
 
+fhz(){
+if [ $1 == 0 ];then
+	echo -e "\033[36m ${2}完成 \033[0m"
+else
+	echo -e "\033[31m ${2}失败，原因见上，程序退出。 \033[0m"
+	exit 1
+fi
+}
+
 check(){
 echo -e "\033[36m +------------------- \033[0m"
 echo -e "\033[36m 1/3基础检测 \033[0m"
@@ -118,29 +133,37 @@ then
 fi
 
 echo -e "\033[36m 2/3命令检测:\033[0m"
-md5sum=`md5sum --version|awk 'NR<2{print $0}'`
-if [ -z "${md5sum}" ]
-then
-	md5sum="Not fonud"
-fi
-echo -e "\033[36m md5sum命令:${md5sum}\033[0m"
-
-tar=`tar --version|awk 'NR<2{print $0}'`
-if [ -z "${tar}" ]
-then
-        echo -e "\033[31m tar命令不存在，将无法完成解压安装操作 \033[0m"
-        tar="Not fonud "
-	exit 1
-fi
-echo -e "\033[36m tar命令:${tar}\033[0m"
-rpm_=`rpm --version|awk 'NR<2{print $0}'`
-if [ -z "${rpm_}" ]
-then
-        echo -e "\033[31m rpm命令不存在，将无法完成安装操作 \033[0m"
-        rpm_="Not fonud "
-        exit 1
-fi
-echo -e "\033[36m rpm命令:${rpm_}\033[0m"
+for v in ${command[*]}
+do
+	which ${v}
+	if [ ${?} -eq 0 ]
+	then
+		echo -e "\033[36m ${v}命令存在，继续。 \033[0m"
+	else
+		echo -e "\033[31m ${v}命令不存在，是否继续:(y/n) \033[0m"
+		if [ ${silent} == "yes" ]
+		then
+			echo -e "\033[31m 是 \033[0m"
+			${v}="Not found"
+		else
+			while true
+			do
+				read select
+				case $select in
+				y|yes|Y)        echo -e "\033[36m 好 \033[0m"
+					select='ok'
+					${v}="Not found"
+					break
+				;;
+				n|no|N)         echo -e "\033[31m 退出程序 \033[0m"
+					exit 1
+				;;
+				*)              echo -e "\033[31m 请输入正确的选择(y/n) \033[0m"
+				esac
+			done
+		fi
+	fi
+done
 
 echo -e "\033[36m 3/3文件检测: \033[0m"
 for value in ${package[*]}
@@ -227,11 +250,11 @@ install-redis(){
 		if [ -d ${r_name} ]
 		then
 			echo -e "\033[36m ${r_name}目录已存在，进入目录并清除上次的编译文件 \033[0m"
-		        cd ${r_name}
-        		make distclean
+		    cd ${r_name}
+        	make distclean
 		else
-        	        tar -zxvf ${name}
-                	fhz $? ${name}解压
+        	tar -zxvf ${name}
+            fhz $? ${name}解压
 			cd ${r_name}
 		fi
 		make -j ${make}
@@ -355,15 +378,6 @@ do
 	fi
 let "int++"
 done
-}
-
-fhz(){
-if [ $1 == 0 ];then
-	echo -e "\033[36m ${2}完成 \033[0m"
-else
-	echo -e "\033[31m ${2}失败，原因见上，程序退出。 \033[0m"
-	exit 1
-fi
 }
 
 test(){
